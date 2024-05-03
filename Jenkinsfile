@@ -16,13 +16,13 @@ pipeline {
         }
         stage('Build docker images') {
             steps {
-                sh 'docker image build -t bangarujyothiswar/netflix:$BUILD_ID .'
+                sh 'docker image build -t rajkumar207/netflix:$BUILD_ID .'
             }
         }
         stage('Trivy Scan') {
             steps {
                 script {
-                    sh 'trivy image --format json -o trivy-report.json bangarujyothiswar/netflix:$BUILD_ID'
+                    sh 'trivy image --format json -o trivy-report.json rajkumar207/netflix:$BUILD_ID'
                 }
                 publishHTML([reportName: 'Trivy Vulnerability Report', reportDir: '.', reportFiles: 'trivy-report.json', keepAll: true, alwaysLinkToLastBuild: true, allowMissing: false])
             }
@@ -34,7 +34,7 @@ pipeline {
         }
         stage('push image to dockerhub') {
             steps {
-                sh 'docker image push bangarujyothiswar/netflix:$BUILD_ID'
+                sh 'docker image push rajkumar207/netflix:$BUILD_ID'
             }
         }
     }
