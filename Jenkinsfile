@@ -22,7 +22,7 @@ pipeline {
         stage('Trivy Scan') {
             steps {
                 script {
-                    sh 'trivy image --format json -o trivy-report.json rajkumar207/netflix:$BUILD_NUMBER'
+                    sh 'trivy image --format json -o trivy-report.json rajkumar207/netflix:$BUILD_ID'
                 }
                 publishHTML([reportName: 'Trivy Vulnerability Report', reportDir: '.', reportFiles: 'trivy-report.json', keepAll: true, alwaysLinkToLastBuild: true, allowMissing: false])
             }
@@ -34,7 +34,7 @@ pipeline {
         }
         stage('push image to dockerhub') {
             steps {
-                sh 'docker image push rajkumar207/netflix:$BUILD_NUMBER'
+                sh 'docker image push rajkumar207/netflix:$BUILD_ID'
             }
         }
     }
