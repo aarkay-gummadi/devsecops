@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_credentials')
-        AWS_DEFAULT_REGION='us-west-2'
     }
     stages {
         stage('clean workspace') {
