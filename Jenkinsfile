@@ -2,6 +2,8 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_credentials')
+        AWS_DEFAULT_REGION='us-west-2'
+        THE_BUTLER_SAYS_SO = credentials('aws_cred')
     }
     stages {
         stage('clean workspace') {
@@ -39,6 +41,28 @@ pipeline {
             steps {
                 sh 'docker push rajkumar207/netflix:$BUILD_ID'
                 echo 'Push Image to dockerhub Completed'
+            }
+        }
+        stage('k8s up and running') {
+            steps {
+                sh 'cd deployment/terraform/aws && terraform init && terraform fmt && terraform validate && terraform plan -var-file values.tfvars && terraform $action -var-file values.tfvars --auto-approve'
+            }
+        }
+        stage('deploy to k8s') {
+            steps {
+                sh 'aws eks update-kubeconfig --name my-eks-cluster'
+                sh 'kubectl apply -f deployment/k8s/deployment.yaml'
+                sh """
+                kubectl patch deployment netflix-app -p '{"spec":{"template":{"spec":{"containers":[{"name":"netflix-app","image":"rajkumar207/netflix:$BUILD_ID"}]}}}}'
+                """
+            }
+        }
+        stage('kubescape scan') {
+            steps {
+                script {
+                    sh "/usr/bin/kubescape scan -t 40 deployment/k8s/deployment.yaml --format junit -o TEST-report.xml"
+                    junit "**/TEST-*.xml"
+                }
             }
         }
     }
