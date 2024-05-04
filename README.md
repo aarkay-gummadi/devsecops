@@ -28,7 +28,7 @@ docker image build -t <your-image-name>:latest .
 
 * to create the container based on the image.
 ```
-docker container run -d -P rajkumar207/aplhine
+docker container run -d -P bangarujyothiswar/devsecops:latest
 docker image ls
 docker container ls
 ```
