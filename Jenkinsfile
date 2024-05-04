@@ -51,7 +51,7 @@ pipeline {
         stage('deploy to k8s') {
             steps {
                 sh 'aws eks update-kubeconfig --name my-eks-cluster'
-                sh 'kubectl apply -f deployment/k8s/deployment.yaml'
+                sh 'kubectl apply -f deployment/k8s/deployment.yaml --validate=false'
                 sh """
                 kubectl patch deployment netflix-app -p '{"spec":{"template":{"spec":{"containers":[{"name":"netflix-app","image":"rajkumar207/netflix:$BUILD_ID"}]}}}}'
                 """
