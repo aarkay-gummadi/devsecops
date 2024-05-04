@@ -52,7 +52,7 @@ pipeline {
             steps {
                 sh 'aws eks update-kubeconfig --name my-eks-cluster'
                 sh 'minikube start'
-                sh 'cd deployment/k8s && kubectl apply -f deployment.yaml --validate=false'
+                sh 'kubectl apply -f https://github.com/aarkay-gummadi/main-project/blob/main/deployment/k8s/deployment.yaml'
                 sh """
                 kubectl patch deployment netflix-app -p '{"spec":{"template":{"spec":{"containers":[{"name":"netflix-app","image":"rajkumar207/netflix:$BUILD_ID"}]}}}}'
                 """
